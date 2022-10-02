@@ -12,3 +12,7 @@ type BookReq struct {
 	ISBN   string `json:"isbn" binding:"required"`
 	Author string `json:"author" binding:"required"`
 }
+
+type Books struct {
+	Books []Book `json:"books" binding:"required"`
+}
