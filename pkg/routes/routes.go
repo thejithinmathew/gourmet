@@ -21,6 +21,6 @@ func New(cfg *config.Config, clients *clients.Clients) {
 		Config:  cfg,
 	}
 	route.POST("/book", c.PostBook)
-	route.PATCH("/book", c.PatchBook)
+	route.PATCH("/book/:id", c.PatchBook)
 	engine.Run()
 }

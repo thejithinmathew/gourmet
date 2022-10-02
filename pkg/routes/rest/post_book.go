@@ -20,9 +20,7 @@ type Controller struct {
 
 func (c *Controller) PostBook(ctx *gin.Context) {
 	logger := utils.GetLogger(ctx)
-	logger.With().Str("METHOD", "PostBook")
-	req := &models.BookReq{}
-	book := models.Book{}
+	req := &models.Book{}
 	parseErr := utils.GetRequest(ctx, req)
 	if parseErr != nil {
 		logger.Error().Err(parseErr).Send()
@@ -45,21 +43,15 @@ func (c *Controller) PostBook(ctx *gin.Context) {
 		return
 	}
 	if res.Err() == nil {
-		_ = res.Decode(&book)
-		ctx.JSON(http.StatusOK, book)
+		_ = res.Decode(&req)
+		ctx.JSON(http.StatusOK, req)
 		return
 	}
-	book = models.Book{
-		Name:       req.Name,
-		Generation: 1,
-		Author:     req.Author,
-		ISBN:       req.ISBN,
-	}
-	_, err := c.Clients.DBClient.Database("dbset2").Collection("books").InsertOne(ctx, book)
+	_, err := c.Clients.DBClient.Database("dbset").Collection("books").InsertOne(ctx, req)
 	if err != nil {
 		logger.Error().Str("ERROR", err.Error())
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, errors.NewError(http.StatusInternalServerError, err.Error()))
 		return
 	}
-	ctx.JSON(http.StatusCreated, &book)
+	ctx.JSON(http.StatusCreated, &req)
 }
