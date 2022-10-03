@@ -36,7 +36,7 @@ func (c *Controller) PostBook(ctx *gin.Context) {
 			return
 		}
 	}
-	res := c.Clients.DBClient.Database("dbset").Collection("books").FindOne(ctx, bson.M{"name": req.Name})
+	res := c.Clients.DBClient.Database(c.Config.DBName).Collection(c.Config.CollectionName).FindOne(ctx, bson.M{"id": req.ID})
 	if res.Err() != nil && res.Err() != mongo.ErrNoDocuments {
 		logger.Err(res.Err())
 		ctx.AbortWithStatusJSON(http.StatusInternalServerError, errors.NewError(http.StatusInternalServerError, res.Err().Error()))
@@ -47,7 +47,7 @@ func (c *Controller) PostBook(ctx *gin.Context) {
 		ctx.JSON(http.StatusOK, req)
 		return
 	}
-	_, err := c.Clients.DBClient.Database("dbset").Collection("books").InsertOne(ctx, req)
+	_, err := c.Clients.DBClient.Database(c.Config.DBName).Collection(c.Config.CollectionName).InsertOne(ctx, req)
 	if err != nil {
 		logger.Error().Str("ERROR", err.Error())
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, errors.NewError(http.StatusInternalServerError, err.Error()))

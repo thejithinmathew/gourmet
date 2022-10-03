@@ -1,0 +1,7 @@
+{
+    "user":"name",
+    "pass": "pass",
+    "mongo_uri":"mongodb:uri",
+    "db_name": "dbname",
+    "col_name": "dbcollection"
+}
