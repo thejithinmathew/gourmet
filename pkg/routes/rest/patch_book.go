@@ -22,7 +22,7 @@ func (c *Controller) PatchBook(ctx *gin.Context) {
 		return
 	}
 
-	updateRes, err := c.Clients.DBClient.Database(c.Config.DBName).Collection(c.Config.CollectionName).UpdateOne(ctx,
+	updateRes, err := c.Clients.DBClient.UpdateOne(ctx,
 		bson.M{
 			"id": id,
 		},

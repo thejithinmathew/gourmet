@@ -9,10 +9,20 @@ import (
 )
 
 type Clients struct {
-	DBClient *mongo.Client
+	DBClient DBClient
 }
 
 func Init(c *config.Config) (*Clients, error) {
+	mCollection, err := dBClient(c)
+	if err != nil {
+		return nil, err
+	}
+	return &Clients{
+		DBClient: mCollection,
+	}, nil
+}
+
+func dBClient(c *config.Config) (DBClient, error) {
 	opts := options.Client().
 		ApplyURI(c.URI).
 		SetAuth(options.Credential{
@@ -23,7 +33,6 @@ func Init(c *config.Config) (*Clients, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &Clients{
-		DBClient: mClient,
-	}, nil
+	mCollection := mClient.Database(c.DBName).Collection(c.CollectionName)
+	return &dbClient{mCollection}, err
 }

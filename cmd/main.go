@@ -1,7 +1,6 @@
 package main
 
 import (
-	"context"
 	"log"
 
 	"github.com/thejithinmathew/gourmet/pkg/clients"
@@ -16,10 +15,5 @@ func main() {
 	if err != nil {
 		log.Fatal("unable to initialize clients", err)
 	}
-	defer func() {
-		if err = Client.DBClient.Disconnect(context.Background()); err != nil {
-			log.Fatal("unable to initialize clients", err)
-		}
-	}()
 	routes.New(&cfg, Client)
 }

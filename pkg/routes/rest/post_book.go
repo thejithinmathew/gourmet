@@ -10,7 +10,6 @@ import (
 	"github.com/thejithinmathew/gourmet/pkg/models/errors"
 	"github.com/thejithinmathew/gourmet/pkg/utils"
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type Controller struct {
@@ -36,8 +35,8 @@ func (c *Controller) PostBook(ctx *gin.Context) {
 			return
 		}
 	}
-	res := c.Clients.DBClient.Database(c.Config.DBName).Collection(c.Config.CollectionName).FindOne(ctx, bson.M{"id": req.ID})
-	if res.Err() != nil && res.Err() != mongo.ErrNoDocuments {
+	res, err := c.Clients.DBClient.FindOne(ctx, bson.M{"id": req.ID})
+	if err != nil {
 		logger.Err(res.Err())
 		ctx.AbortWithStatusJSON(http.StatusInternalServerError, errors.NewError(http.StatusInternalServerError, res.Err().Error()))
 		return
@@ -47,7 +46,7 @@ func (c *Controller) PostBook(ctx *gin.Context) {
 		ctx.JSON(http.StatusOK, req)
 		return
 	}
-	_, err := c.Clients.DBClient.Database(c.Config.DBName).Collection(c.Config.CollectionName).InsertOne(ctx, req)
+	_, err = c.Clients.DBClient.InsertOne(ctx, req)
 	if err != nil {
 		logger.Error().Str("ERROR", err.Error())
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, errors.NewError(http.StatusInternalServerError, err.Error()))
